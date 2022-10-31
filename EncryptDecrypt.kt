@@ -1,22 +1,19 @@
 package encryptdecrypt
 
 fun main() {
-    val text = "we found a treasure!"       //начальное сообщение
+    val text = readln().toString()       //начальное сообщение
+    val key = readln().toInt()          //Ключ шифрования
     val z1 = ('a'..'z').joinToString("").toMutableList()        //массив алфавита
-    val z2 = z1.reversed()      //создаем еще один массив с перевернутым алфавитом из z1
-    val z3 = mutableMapOf<String, String>()     //создаем пустой редактируемый MAP
     var description = ""        //шифровонное сообщение
     var i = 0       //счетчик
-    while (i < z1.size){            //складываем  2 массива алфавита в 1 MAP
-        z3.put(z1[i].toString(), z2[i].toString())
+    while (i < text.length) {       //цикл на длинну текста
+        if (z1.contains(text.get(i))) {     //проверка что массив содержит символ из текста
+            if (z1.indexOf(text.get(i)) + key < z1.size) {      //проверка что индекс символа текста + ключ не превышают длинну массива (алфавита)
+                description = description.plus(z1.get(z1.indexOf(text.get(i)) + key)) // шифруем символ добавив к индексу символа ключ и по новому индексу взяли новый символ из массива
+            } else description = description.plus(z1.get(z1.indexOf(text.get(i)) + key - z1.size))  //если индекс символа текста + ключ превышают длинну массива (алфавита) и шифруем его
+        }
+        else description = description.plus(text.get(i))    // записываем символы которые не содержатся в массиве
         i++
     }
-    i = 0       //сбрасываем счетчик в 0
-    while (i < text.length){        //цикл по длинне начального сообщения
-        if (z3.contains(text.get(i).toString()))        //проверка на символы в MAP
-            description = description.plus(z3.get(text.get(i).toString()))      //если символ есть в MAP то взять значение по ключю из символа начального текста
-        else description = description.plus(text.get(i))        //если символа нет в MAP то просто дописать из начального сообщения
-        i++
-        }
     print(description)      //печатаем шифрованное сообщение
 }
