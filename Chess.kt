@@ -1,10 +1,12 @@
 package chess
 
+import kotlin.system.exitProcess
+
 fun name():Pair<String,String>{
     print("First Player's name: ")
-    val name1 = readln().toString()
+    val name1 = readln()
     print("Second Player's name: ")
-    val name2 = readln().toString()
+    val name2 = readln()
     return Pair(name1,name2)
 }
 
@@ -24,7 +26,8 @@ fun walk(name1:String, name2:String) {
         charArrayOf('B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'),
         charArrayOf(' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ')
     )
-    var (n1, l1, l2, K, L) = List(5) { 0 }
+    var (n1, l1, l2, N1, N2) = List(5) { 0 }
+    var L1 = 0
     var (number1, number2) = List(2) { ' ' }
     fun vvod(s: String) {
         var z = 0
@@ -32,12 +35,12 @@ fun walk(name1:String, name2:String) {
         if (n1 % 2 == 0) {
             println("$name1's turn:")
         } else (println("$name2's turn:"))
-        walkPlayer = readln().toString()
+        walkPlayer = readln()
 
 //Если Exit то закрываем программу
-        if (walkPlayer.equals("exit")) {
+        if (walkPlayer == "exit") {
             println("Bye!")
-            System.exit(0)
+            exitProcess(0)
         }
 
         wPlayer = walkPlayer.toCharArray()
@@ -94,25 +97,25 @@ fun walk(name1:String, name2:String) {
         }
 
 //Если на начальной позиции нет фигуры белого цвета
-        if (s.equals("W") && !checkPole.equals("W")) {             //Если на начальной позиции нет фигуры белого цвета то No white pawn at
+        if (s == "W" && checkPole != "W") {             //Если на начальной позиции нет фигуры белого цвета то No white pawn at
             println("No white pawn at ${wPlayer[0]}${wPlayer[1]}")
             vvod(s)
         }
 
 //Если на начальной позиции нет фигуры черного цвета
-        if (s.equals("B") && !checkPole.equals("B")) {
+        if (s == "B" && checkPole != "B") {
             println("No black pawn at ${wPlayer[0]}${wPlayer[1]}")
             vvod(s)
         }
 
 //Проверка следующей клетки
-        if (s.equals("W")) {
-            if (l1 == l2 && pole[number2.digitToInt() - 1][l2].toString().equals("B")) {
+        if (s == "W") {
+            if (l1 == l2 && pole[number2.digitToInt() - 1][l2].toString() == "B") {
                 println("Invalid Input")
                 vvod(s)
             }
         } else {
-            if (l1 == l2 && pole[number2.digitToInt() - 1][l2].toString().equals("W")) {
+            if (l1 == l2 && pole[number2.digitToInt() - 1][l2].toString() == "W") {
                 println("Invalid Input")
                 vvod(s)
             }
@@ -125,7 +128,7 @@ fun walk(name1:String, name2:String) {
         }
 
 //Запрет на ход назад
-        if (s.equals("W")) {
+        if (s == "W") {
             if (number2.digitToInt() < number1.digitToInt()) {
                 println("Invalid Input")
                 vvod(s)
@@ -138,45 +141,26 @@ fun walk(name1:String, name2:String) {
         }
 
 //Съедание в проходе
-        if (L == 2 || L == 7) {
-            if (s.equals("W")) {
-                if (L == 7 && (l2 == K && (l2 - 1 == l1 || l2 + 1 == l1))) {
+        if ((N1 == 2 || N1 == 7) && L1 == l2) {
+            if (s == "W") {
+                if (N1 == 7 && (number2.digitToInt() == N2+1 && (l2 - 1 == l1 || l2 + 1 == l1))) {
                     pole[number2.digitToInt() - 1][l2] = 'W'
                     pole[number2.digitToInt() - 2][l2] = ' '
                     return
                 }
             } else {
-                if (L == 2 && (l2 == K && (l2 - 1 == l1 || l2 + 1 == l1))) {
-                    pole[number2.digitToInt() + 1][l2] = 'B'
-                    pole[number2.digitToInt() + 2][l2] = ' '
+                if (N1 == 2 && (number2.digitToInt() == N2-1 && (l2 - 1 == l1 || l2 + 1 == l1))) {
+                    pole[number2.digitToInt() - 1][l2] = 'B'
+                    pole[number2.digitToInt() - 2][l2] = ' '
                     return
                 }
             }
         }
-
-//Проверка пустой диагонали
-//        if (s.equals("W")) {
-//            if ((l2 - 1 == l1 || l2 + 1 == l1) && number2.digitToInt() + 1 == number1.digitToInt() && !pole[number2.digitToInt() + 1][l2].equals(
-//                    'B'
-//                )
-//            ) {
-//                println("Invalid Input")
-//                vvod(s)
-//            }
-//        } else {
-//            if ((l2 - 1 == l1 || l2 + 1 == l1) && number2.digitToInt() + 1 == number1.digitToInt() && !pole[number2.digitToInt() + 1][l2].equals(
-//                    'W'
-//                )
-//            ) {
-//                println("Invalid Input")
-//                vvod(s)
-//            }
-//        }
-
+        
 //Сьедаем по диагонали
 //для белых
-        if (s.equals("W")) {
-            if ((l1 + 1 == l2 || l1 - 1 == l2) && pole[number2.digitToInt() - 1][l2].equals('B') && number1.digitToInt() + 1 == number2.digitToInt()) {
+        if (s == "W") {
+            if ((l1 + 1 == l2 || l1 - 1 == l2) && pole[number2.digitToInt() - 1][l2] == 'B' && number1.digitToInt() + 1 == number2.digitToInt()) {
                 pole[number2.digitToInt() - 1][l2] = 'W'
                 pole[number1.digitToInt() - 1][l1] = ' '
             } else {
@@ -196,65 +180,66 @@ fun walk(name1:String, name2:String) {
         }
 //для черных
         else {
-            if ((l2 + 1 == l1 || l2 - 1 == l1) && pole[number2.digitToInt() - 1][l2].equals('W') && number1.digitToInt() - 1 == number2.digitToInt()) {
+            if ((l2 + 1 == l1 || l2 - 1 == l1) && pole[number2.digitToInt() - 1][l2] == 'W' && number1.digitToInt() - 1 == number2.digitToInt()) {
                 pole[number2.digitToInt() - 1][l2] = 'B'
                 pole[number1.digitToInt() - 1][l1] = ' '
             } else {
-                    if (number1.digitToInt() == 7 && number1.digitToInt() - number2.digitToInt() > 2) {
-                        println("Invalid Input")
-                        vvod(s)
-                    }
-                    if (number1.digitToInt() != 7 && number1.digitToInt() - number2.digitToInt() > 1) {
-                        println("Invalid Input")
-                        vvod(s)
-                    }
-                    if (l1 != l2) {
-                        println("Invalid Input")
-                        vvod(s)
-                    }
-                    }
+                if (number1.digitToInt() == 7 && number1.digitToInt() - number2.digitToInt() > 2) {
+                    println("Invalid Input")
+                    vvod(s)
+                }
+                if (number1.digitToInt() != 7 && number1.digitToInt() - number2.digitToInt() > 1) {
+                    println("Invalid Input")
+                    vvod(s)
+                }
+                if (l1 != l2) {
+                    println("Invalid Input")
+                    vvod(s)
+                }
             }
+        }
     }
     fun pole(col: Char = ' ') {
-            val q = pole[number1.digitToInt() - 1][l1]
-            if (col.equals(q)) {
-                pole[number1.digitToInt() - 1][l1] = ' '
-                pole[number2.digitToInt() - 1][l2] = col
-            }
-        }
-
-    fun polePrint() {
-            var ryad = 8
-            println("  +---+---+---+---+---+---+---+---+")
-            for (i in pole.asReversed()) {
-                print("$ryad |")
-                print("")
-                for (j in i) {
-                    print(" $j |")
-                }
-                println()
-                println("  +---+---+---+---+---+---+---+---+")
-                ryad--
-            }
-            println("    a   b   c   d   e   f   g   h  ")
-        }
-        polePrint()
-        while (!walkPlayer.equals("exit")) {
-            if (n1 % 2 == 0) {
-                vvod("W")
-                n1++
-                pole('W')
-                polePrint()
-            } else {
-                vvod("B")
-                n1++
-                pole('B')
-                polePrint()
-            }
-            L = number1.digitToInt() //
-            K = l1
+        val q = pole[number1.digitToInt() - 1][l1]
+        if (col == q) {
+            pole[number1.digitToInt() - 1][l1] = ' '
+            pole[number2.digitToInt() - 1][l2] = col
         }
     }
+
+    fun polePrint() {
+        var ryad = 8
+        println("  +---+---+---+---+---+---+---+---+")
+        for (i in pole.asReversed()) {
+            print("$ryad |")
+            print("")
+            for (j in i) {
+                print(" $j |")
+            }
+            println()
+            println("  +---+---+---+---+---+---+---+---+")
+            ryad--
+        }
+        println("    a   b   c   d   e   f   g   h  ")
+    }
+    polePrint()
+    while (walkPlayer != "exit") {
+        if (n1 % 2 == 0) {
+            vvod("W")
+            n1++
+            pole('W')
+            polePrint()
+        } else {
+            vvod("B")
+            n1++
+            pole('B')
+            polePrint()
+        }
+        N1 = number1.digitToInt() //
+        N2 = number2.digitToInt()
+        L1 = l1
+    }
+}
 
 fun main() {
     println("Pawns-Only Chess")
