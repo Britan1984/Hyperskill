@@ -1,5 +1,6 @@
 package chess
 
+import java.io.Serializable
 import kotlin.system.exitProcess
 
 fun name():Pair<String,String>{
@@ -9,6 +10,21 @@ fun name():Pair<String,String>{
     val name2 = readln()
     return Pair(name1,name2)
 }
+
+fun win(w:String){
+    when(w){
+        "W" -> println("White Wins!")
+        "B" -> println("Black Wins!")
+        else -> println("Stalemate!")
+    }
+    exit()
+}
+
+fun exit(){
+    println("Bye!")
+    exitProcess(0)
+}
+
 
 fun walk(name1:String, name2:String) {
     var walkPlayer = ""
@@ -39,8 +55,7 @@ fun walk(name1:String, name2:String) {
 
 //Если Exit то закрываем программу
         if (walkPlayer == "exit") {
-            println("Bye!")
-            exitProcess(0)
+            exit()
         }
 
         wPlayer = walkPlayer.toCharArray()
@@ -156,7 +171,7 @@ fun walk(name1:String, name2:String) {
                 }
             }
         }
-        
+
 //Сьедаем по диагонали
 //для белых
         if (s == "W") {
@@ -223,17 +238,78 @@ fun walk(name1:String, name2:String) {
         println("    a   b   c   d   e   f   g   h  ")
     }
     polePrint()
+    fun pusto(z: Char){
+        var x = 0
+        for (i in pole){
+            if (i.contains(z)){
+                x++
+            }
+        }
+        if (x==0) {
+            if(z=='W') win("B") else win("W")
+        }
+    }
+    fun stalemate(c:Char){
+        var zW = 0
+        var zB = 0
+        if (c=='W') {
+            for (i in pole.indices) {
+                if (pole[i].contains('W')) {
+                    for (j in pole[i].indices) {
+                        if (pole[i][j] == 'W') {
+                            if (j < 7) {
+                                if (pole[i + 1][j] == ' ' || pole[i + 1][j + 1] == 'B') {
+                                    zW = 0; break
+                                } else zW = 1
+                            } else {
+                                if (pole[i + 1][j] == ' ' || pole[i + 1][j - 1] == 'B') {
+                                    zW = 0; break
+                                } else zW = 1
+                            }
+                        }
+                    }
+                    if (zW == 1) win("stalement") else break
+                }
+            }
+        }
+        if (c == 'B') {
+            for (i in pole.indices) {
+                if (pole[i].contains('B')) {
+                    for (j in pole[i].indices) {
+                        if (pole[i][j] == 'B') {
+                            if (j < 7) {
+                                if (pole[i - 1][j] == ' ' || pole[i - 1][j + 1] == 'W') {
+                                    zB = 0; break
+                                } else zB = 1
+                            } else {
+                                if (pole[i - 1][j] == ' ' || pole[i + 1][j - 1] == 'B') {
+                                    zB = 0; break
+                                } else zB = 1
+                            }
+                        }
+                    }
+                    if (zB == 1) win("stalement") else break
+                }
+            }
+        }
+    } //проверка на ничью
     while (walkPlayer != "exit") {
         if (n1 % 2 == 0) {
+            stalemate('W') //проверка на ничью
             vvod("W")
             n1++
             pole('W')
             polePrint()
+            if (number2=='8') win("W")
+            pusto('B')
         } else {
+            stalemate('B') //проверка на ничью
             vvod("B")
             n1++
             pole('B')
             polePrint()
+            if (number2=='1') win("B")
+            pusto('W')
         }
         N1 = number1.digitToInt() //
         N2 = number2.digitToInt()
