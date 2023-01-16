@@ -1,53 +1,87 @@
 package connectfour
 
 import java.lang.NumberFormatException
-class players(n1: String, n2: String) {
-    var name1: String = n1
-    var name2: String = n2
-}
-class pole {
-    var rows = 6
-    var columns = 7
-}
-fun name(): players {
-    val pl = players("","")
-    println("Connect Four")
-    print("First player's name: ")
-    pl.name1 = readLine().toString()
-    print("Second player's name: ")
-    pl.name2 = readLine().toString()
-    return players(pl.name1, pl.name2)
-}
-fun start(players: players) {
-    println(
-        "Set the board dimensions (Rows x Columns)\n" + "Press Enter for default (6 x 7)"
-    )
-    var poleVvod = ""
-    val pole = pole()
-    poleVvod = readLine().toString()
-    poleVvod = poleVvod.replace("\\s".toRegex(),"")
-    if (poleVvod.equals("")) println("${players.name1} VS ${players.name2}\n${pole.rows} X ${pole.columns} board")
-    else {
-        try {
-            val tempPole = poleVvod.split("x|X".toRegex()).map { it.toInt() }
-            pole.rows = tempPole[0]
-            pole.columns = tempPole[1]
-            if (pole.rows < 5 || pole.rows > 9) {
-                println("Board rows should be from 5 to 9")
-                start(players)
-            }
-            if (pole.columns < 5 || pole.columns > 9) {
-                println("Board columns should be from 5 to 9")
-                start(players)
-            } else println("${players.name1} VS ${players.name2}\n${pole.rows} X ${pole.columns} board")
-        } catch (e: NumberFormatException) {
-            println("Invalid input")
-            start(players)
-        }
-    }
-}
+
 fun main() {
-    start(name())
+    class playersCl() {
+        var name1: String = ""
+        var name2: String = ""
+    }
+    val players = playersCl()
+
+    class poleCl() {
+        var rows = 6
+        var columns = 7
+    }
+    val pole = poleCl()
+
+    class deskCl {
+    val board = Array(pole.rows, {Array(pole.columns, {" "})})
+    }
+
+    fun desk(){
+        var deskCl = deskCl().board
+        for (i in 1..pole.columns){
+            print(" ")
+            print(i)
+        }
+        println(" ")
+        for (i in deskCl) {
+            for (j in i) {
+                print("║")
+                print(j)
+            }
+            println("║")
+        }
+        print("╚")
+        for (i in 1..pole.columns-1){
+            print("═")
+            print("╩")
+        }
+        print("═")
+        println("╝")
+
+    }
+
+    fun name() {
+        println("Connect Four")
+        print("First player's name: ")
+        players.name1 = readLine().toString()
+        print("Second player's name: ")
+        players.name2 = readLine().toString()
+    }
+
+    fun play() {
+        println(
+            "Set the board dimensions (Rows x Columns)\n" + "Press Enter for default (6 x 7)"
+        )
+        var poleVvod = ""
+        poleVvod = readLine().toString()
+        poleVvod = poleVvod.replace("\\s".toRegex(), "")
+        if (poleVvod.equals("")) println("${players.name1} VS ${players.name2}\n${pole.rows} X ${pole.columns} board")
+        else {
+            try {
+                val tempPole = poleVvod.split("x|X".toRegex()).map { it.toInt() }
+                pole.rows = tempPole[0]
+                pole.columns = tempPole[1]
+                if (pole.rows < 5 || pole.rows > 9) {
+                    println("Board rows should be from 5 to 9")
+                    play()
+                }
+                if (pole.columns < 5 || pole.columns > 9) {
+                    println("Board columns should be from 5 to 9")
+                    play()
+                } else println("${players.name1} VS ${players.name2}\n${pole.rows} X ${pole.columns} board")
+            } catch (e: NumberFormatException) {
+                println("Invalid input")
+                play()
+            }
+        }
+        desk()
+    }
+
+    name()
+    play()
 }
 
 
