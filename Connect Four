@@ -1,6 +1,7 @@
 package connectfour
 
 import java.lang.NumberFormatException
+import kotlin.system.exitProcess
 
 fun main() {
     class playersCl() {
@@ -15,12 +16,8 @@ fun main() {
     }
     val pole = poleCl()
 
-    class deskCl {
-    val board = Array(pole.rows, {Array(pole.columns, {" "})})
-    }
-
-    fun desk(){
-        var deskCl = deskCl().board
+    fun desk(d: MutableList<Array<String>>){
+        var deskCl = d
         for (i in 1..pole.columns){
             print(" ")
             print(i)
@@ -43,12 +40,59 @@ fun main() {
 
     }
 
+    fun isInteger(s: String): Boolean {
+        return try {
+            s.toInt()
+            true
+        } catch (e: NumberFormatException) {
+            false
+        }
+    }
+
+    fun checkTurn(): Int {
+        while (true) {
+            var turnS = ""
+            var turnI: Int
+            turnS = readLine().toString()
+            if (turnS.equals("end")) {
+                println("Game over!")
+                exitProcess(0)
+            }
+            if (turnS.equals("") || !isInteger(turnS)){
+                println("Incorrect column number")
+                return 0
+            }
+            turnI = turnS.toInt()
+            if (turnI < 1 || turnI > pole.columns){
+                println("The column number is out of range (1 - ${pole.columns})")
+                return 0
+            }
+            else return turnI
+        }
+    }
+
     fun name() {
         println("Connect Four")
         print("First player's name: ")
         players.name1 = readLine().toString()
         print("Second player's name: ")
         players.name2 = readLine().toString()
+    }
+
+    fun checkRow(board: MutableList<Array<String>>, checkTurn: Int): Int {
+        var i = pole.rows-1
+        var z = -1
+            while (i > -1) {
+                if (board[i][checkTurn] == " ") {
+                    z = i
+                    break
+                }
+                i--
+            }
+        if (z == -1){
+            println("Column ${checkTurn + 1} is full")
+        }
+        return z
     }
 
     fun play() {
@@ -77,11 +121,41 @@ fun main() {
                 play()
             }
         }
-        desk()
+        val board = MutableList(pole.rows,{ Array(pole.columns, {" "}) })
+
+        var turnAfterCheck: Int
+        var player = 0
+        while (true) {
+            desk(board)
+            if (player == 0) {
+                while (true){
+                    println("${players.name1}'s turn:")
+                    turnAfterCheck = checkTurn()
+                    if (turnAfterCheck == 0) continue
+                    val check = checkRow(board,turnAfterCheck-1)
+                    if (check != -1){
+                        board[check][turnAfterCheck - 1] = "o"
+                        break
+                    }
+                }
+                player++
+            }
+            else {
+                while (true){
+                    println("${players.name2}'s turn:")
+                    turnAfterCheck = checkTurn()
+                    if (turnAfterCheck == 0) continue
+                    val check = checkRow(board,turnAfterCheck-1)
+                    if (check != -1){
+                        board[check][turnAfterCheck - 1] = "*"
+                        break
+                    }
+                }
+                player--
+            }
+        }
     }
 
     name()
     play()
 }
-
-
