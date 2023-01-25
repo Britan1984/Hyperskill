@@ -82,17 +82,86 @@ fun main() {
     fun checkRow(board: MutableList<Array<String>>, checkTurn: Int): Int {
         var i = pole.rows-1
         var z = -1
-            while (i > -1) {
-                if (board[i][checkTurn] == " ") {
-                    z = i
-                    break
-                }
-                i--
+        while (i > -1) {
+            if (board[i][checkTurn] == " ") {
+                z = i
+                break
             }
+            i--
+        }
         if (z == -1){
             println("Column ${checkTurn + 1} is full")
         }
         return z
+    }
+
+    fun checkWin(board: MutableList<Array<String>>) {
+        var x = pole.rows - 1
+        var y = 0
+        var p = " "
+        var draw = 0
+
+        fun win() {
+            if (p.equals("o")) {
+                println("Player ${players.name1} won")
+                println("Game Over!")
+                exitProcess(0)
+            }
+            if (p.equals("*")) {
+                println("Player ${players.name2} won")
+                println("Game Over!")
+                exitProcess(0)
+            }
+        }
+        while (y != pole.columns){
+            p = board[x][y]
+            if (board[x][y] != " "){
+                if (x > 2) {
+                    if (board[x][y] == board[x - 1][y] && board[x][y] == board[x - 2][y] && board[x][y] == board[x - 3][y]) {
+                        win()
+                    }
+                }                                        //проверка по вертикали
+                if (y < pole.columns - 3){
+                    if (board[x][y] == board[x][y + 1] && board[x][y] == board[x][y + 2] && board[x][y] == board[x][y + 3]) {
+                        win()
+                    }
+                }                          //проверка по горизонтали
+                if (x > 2 && y > 2) {
+                    if (board[x][y] == board[x - 1][y - 1] && board[x][y] == board[x - 2][y - 2] && board[x][y] == board[x - 3][y - 3]) {
+                        win()
+                    }
+                }                               //проверка по диагонали (x-1,y-1)
+                if (x > 2 && y < pole.columns - 3) {
+                    if (board[x][y] == board[x - 1][y + 1] && board[x][y] == board[x - 2][y + 2] && board[x][y] == board[x - 3][y + 3]) {
+                        win()
+                    }
+                }                //проверка по диагонали (x-1,y+1)
+                if (x < pole.rows - 3  && y < pole.columns - 3) {
+                    if (board[x][y] == board[x + 1][y + 1] && board[x][y] == board[x + 2][y + 2] && board[x][y] == board[x + 3][y + 3]) {
+                        win()
+                    }
+                }   //проверка по диагонали (x+1,y+1)
+                if (x < pole.rows - 3 && y > 2) {
+                    if (board[x][y] == board[x + 1][y - 1] && board[x][y] == board[x + 2][y - 2] && board[x][y] == board[x + 3][y - 3]) {
+                        win()
+                    }
+                }                   //проверка по диагонали (x+1,y-1)
+            }
+            y++
+        }
+        for (i in board){
+            for (j in i){
+                if (j.equals(" ")){
+                    draw = 1
+                    break
+                }
+            }
+        }
+        if (draw == 0){
+            println("It is a draw")
+            println("Game Over!")
+            exitProcess(0)
+        }
     }
 
     fun play() {
@@ -127,6 +196,7 @@ fun main() {
         var player = 0
         while (true) {
             desk(board)
+            checkWin(board)
             if (player == 0) {
                 while (true){
                     println("${players.name1}'s turn:")
