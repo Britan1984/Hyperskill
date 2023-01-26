@@ -15,6 +15,14 @@ fun main() {
         var columns = 7
     }
     val pole = poleCl()
+    var end = 0
+    class scoreCl(){
+        var game = 0
+        var numberGame = 1
+        var score1 = 0
+        var score2 = 0
+    }
+    val score = scoreCl()
 
     fun desk(d: MutableList<Array<String>>){
         var deskCl = d
@@ -100,17 +108,28 @@ fun main() {
         var y = 0
         var p = " "
         var draw = 0
-
-        fun win() {
-            if (p.equals("o")) {
-                println("Player ${players.name1} won")
+        fun winDrawText() {
+            if (score.game > 1 && score.game >= score.numberGame) {
+                println("Score\n" +
+                        "${players.name1}: ${score.score1} ${players.name2}: ${score.score2}")
+            }
+            score.numberGame++
+            if (score.game +1 == score.numberGame) {
                 println("Game Over!")
                 exitProcess(0)
             }
+            end = 1
+        }
+        fun win() {
+            if (p.equals("o")) {
+                println("Player ${players.name1} won")
+                score.score1 += 2
+                winDrawText()
+            }
             if (p.equals("*")) {
                 println("Player ${players.name2} won")
-                println("Game Over!")
-                exitProcess(0)
+                score.score2 += 2
+                winDrawText()
             }
         }
         while (y != pole.columns){
@@ -159,22 +178,55 @@ fun main() {
         }
         if (draw == 0){
             println("It is a draw")
-            println("Game Over!")
-            exitProcess(0)
+            score.score1 ++
+            score.score2 ++
+            winDrawText()
+            end = 1
         }
     }
 
     fun play() {
-        println(
-            "Set the board dimensions (Rows x Columns)\n" + "Press Enter for default (6 x 7)"
-        )
         var poleVvod = ""
-        poleVvod = readLine().toString()
-        poleVvod = poleVvod.replace("\\s".toRegex(), "")
-        if (poleVvod.equals("")) println("${players.name1} VS ${players.name2}\n${pole.rows} X ${pole.columns} board")
-        else {
+        var player = 0
+        fun razmerPole() {
+            println(
+                "Set the board dimensions (Rows x Columns)\n" + "Press Enter for default (6 x 7)"
+            )
+            poleVvod = readln()
+            poleVvod = poleVvod.replace("\\s".toRegex(), "")
+        }
+        razmerPole()
+        var gameS = ""
+
+
+        fun multiSingle() {
+            println(
+                "Do you want to play single or multiple games?\n" +
+                        "For a single game, input 1 or press Enter\n" +
+                        "Input a number of games:"
+            )
             try {
-                val tempPole = poleVvod.split("x|X".toRegex()).map { it.toInt() }
+                gameS = readln()
+                if (gameS.equals("")) score.game = 1
+                else score.game = gameS.toInt()
+                if (score.game > 0) {
+                    println("${players.name1} VS ${players.name2}\n${pole.rows} X ${pole.columns} board")
+                    if (score.game == 1) println("Single game")
+                    if (score.game > 1) println("Total ${score.game} games")
+                } else {
+                    println("Invalid input")
+                    multiSingle()
+                }
+            } catch (e: NumberFormatException) {
+                println("Invalid input")
+                multiSingle()
+            }
+        }
+
+        if (poleVvod.equals("")) multiSingle()
+        else{
+            try {
+                val tempPole = poleVvod.split("[xX]".toRegex()).map { it.toInt() }
                 pole.rows = tempPole[0]
                 pole.columns = tempPole[1]
                 if (pole.rows < 5 || pole.rows > 9) {
@@ -184,44 +236,49 @@ fun main() {
                 if (pole.columns < 5 || pole.columns > 9) {
                     println("Board columns should be from 5 to 9")
                     play()
-                } else println("${players.name1} VS ${players.name2}\n${pole.rows} X ${pole.columns} board")
+                } else multiSingle()
             } catch (e: NumberFormatException) {
                 println("Invalid input")
                 play()
             }
         }
-        val board = MutableList(pole.rows,{ Array(pole.columns, {" "}) })
-
-        var turnAfterCheck: Int
-        var player = 0
-        while (true) {
-            desk(board)
-            checkWin(board)
-            if (player == 0) {
-                while (true){
-                    println("${players.name1}'s turn:")
-                    turnAfterCheck = checkTurn()
-                    if (turnAfterCheck == 0) continue
-                    val check = checkRow(board,turnAfterCheck-1)
-                    if (check != -1){
-                        board[check][turnAfterCheck - 1] = "o"
-                        break
+        end@ repeat(score.game) {
+            val board = MutableList(pole.rows, { Array(pole.columns, { " " }) })
+            if (score.game>1) println("Game #${score.numberGame}")
+            var turnAfterCheck: Int
+            end = 0
+            while (true) {
+                desk(board)
+                checkWin(board)
+                if (end == 1) {
+                    return@repeat
+                } else {
+                    if (player == 0) {
+                        while (true) {
+                            println("${players.name1}'s turn:")
+                            turnAfterCheck = checkTurn()
+                            if (turnAfterCheck == 0) continue
+                            val check = checkRow(board, turnAfterCheck - 1)
+                            if (check != -1) {
+                                board[check][turnAfterCheck - 1] = "o"
+                                break
+                            }
+                        }
+                        player++
+                    } else {
+                        while (true) {
+                            println("${players.name2}'s turn:")
+                            turnAfterCheck = checkTurn()
+                            if (turnAfterCheck == 0) continue
+                            val check = checkRow(board, turnAfterCheck - 1)
+                            if (check != -1) {
+                                board[check][turnAfterCheck - 1] = "*"
+                                break
+                            }
+                        }
+                        player--
                     }
                 }
-                player++
-            }
-            else {
-                while (true){
-                    println("${players.name2}'s turn:")
-                    turnAfterCheck = checkTurn()
-                    if (turnAfterCheck == 0) continue
-                    val check = checkRow(board,turnAfterCheck-1)
-                    if (check != -1){
-                        board[check][turnAfterCheck - 1] = "*"
-                        break
-                    }
-                }
-                player--
             }
         }
     }
