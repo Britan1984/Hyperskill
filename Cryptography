@@ -1,0 +1,29 @@
+package cryptography
+
+fun main() {
+    fun hide(){
+        println("Hiding message in image.")
+    }
+
+    fun show() {
+        println("Obtaining message from image.")
+    }
+
+    fun exit() {
+        println("Bye!")
+        System.exit(0)
+    }
+    fun start(){
+        while (true) {
+            println("Task (hide, show, exit):")
+            when (readln()) {
+                "hide" -> hide()
+                "show" -> show()
+                "exit" -> exit()
+                else -> println("Wrong task: [input String]")
+            }
+        }
+    }
+
+    start()
+}
