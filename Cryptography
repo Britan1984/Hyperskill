@@ -1,29 +1,75 @@
 package cryptography
+import java.awt.Color
+import java.awt.image.BufferedImage
+import java.io.File
+import javax.imageio.IIOException
+import javax.imageio.ImageIO
 
 fun main() {
-    fun hide(){
-        println("Hiding message in image.")
-    }
-
-    fun show() {
-        println("Obtaining message from image.")
-    }
-
-    fun exit() {
-        println("Bye!")
-        System.exit(0)
-    }
-    fun start(){
-        while (true) {
-            println("Task (hide, show, exit):")
-            when (readln()) {
-                "hide" -> hide()
-                "show" -> show()
-                "exit" -> exit()
-                else -> println("Wrong task: [input String]")
-            }
+    while (true) {
+        println("Task (hide, show, exit):")
+        when (readln()) {
+            "hide" -> hide()
+            "show" -> show()
+            "exit" -> exit()
+            else -> println("Wrong task: [input String]")
         }
     }
+}
+fun file(): Pair<File, File> {
+    var iImage = File("")
+    var oImage = File("")
+    println("Input image file:")
+    iImage = File(readln())
+    println("Output image file:")
+    oImage = File(readln())
+    return Pair(iImage, oImage)
+}
 
-    start()
+fun picture(iImage: File, oImage: File) {
+    val image: BufferedImage = ImageIO.read(iImage)
+    for (i in 0..image.width-1) {
+        for (j in 0..image.height-1) {
+            val rgb = image.getRGB(i, j)
+            val alpha: Int = rgb shr 24 and 0xff
+            val red: Int = rgb shr 16 and 0xff
+            val nRed = red or 0x010101 and 0xff
+            val green: Int = rgb shr 8 and 0xff
+            val nGreen = green or 0x010101 and 0xff
+            val blue: Int = rgb and 0xff
+            val nBlue = blue or 0x010101 and 0xff
+            image.setRGB(i, j, Color(nRed, nGreen, nBlue).rgb)
+        }
+    }
+    ImageIO.write(image, "PNG", oImage)
+}
+
+fun hide() {
+    var (iImage, oImage) = file()
+    try {
+        picture(iImage, oImage)
+    }
+    catch (e: IIOException) {
+        error()
+    }
+
+    println(
+        "Input Image: ${iImage.invariantSeparatorsPath}\n" +
+                "Output Image: ${oImage.invariantSeparatorsPath}\n" +
+                "Image ${oImage.absolutePath.substringAfterLast("\\")} is saved."
+    )
+}
+
+fun show() {
+    println("Obtaining message from image.")
+}
+
+fun exit() {
+    println("Bye!")
+    System.exit(0)
+}
+
+fun error() {
+    println("Can't read input file!")
+    main()
 }
