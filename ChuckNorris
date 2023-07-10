@@ -1,0 +1,9 @@
+package chucknorris
+
+fun main() {
+    println("Input string:")
+    val text = readln()
+    for (i in 0..text.length-1){
+        print("${text[i]} ")
+    }
+}
