@@ -54,21 +54,29 @@ fun decoder(){
         else if (arrNum[i].equals("00")){
             for (x in 1..arrNum[i+1].length) text+=0
         }
+        else {
+            text = ""
+            break
+        }
     }
     val arrText = arrayListOf<Int>()
-    for (i in 1..text.length/7){
-        if (i == 1){
-                arrText.add(text.substring(startIndex = 0, endIndex = 7*i).toInt(2))
+    if (text.length%7 == 0) {
+        for (i in 1..text.length / 7) {
+            if (i == 1) {
+                arrText.add(text.substring(startIndex = 0, endIndex = 7 * i).toInt(2))
+            } else arrText.add(text.substring(startIndex = 7 * (i - 1), endIndex = 7 * i).toInt(2))
         }
-        else arrText.add(text.substring(startIndex = 7*(i-1), endIndex = 7*i).toInt(2))
+        text =  ""
+        for (j in arrText){
+            text += j.toChar()
+        }
     }
-    text =  ""
-    for (j in arrText){
-        text += j.toChar()
+    else text = ""
+    if (text.length > 0) {
+        println("Decoded string:")
+        println(text)
     }
-
-    println("Decoded string:")
-    println(text)
+    else println("Encoded string is not valid.")
     main()
 }
 fun main() {
@@ -80,6 +88,10 @@ fun main() {
         "exit" -> {
             println("Bye!")
             System.exit(0)
+        }
+        else -> {
+            println("There is no '$operation' operation")
+            main()
         }
     }
 }
