@@ -1,6 +1,7 @@
 package chucknorris
 
-import java.lang.StringBuilder
+import kotlin.text.StringBuilder
+
 fun encoder(textArr: ArrayList<String>) {
     var hexText = ""
     for (i in textArr) {
@@ -35,13 +36,25 @@ fun decoder(textArr: String):String {
     var text = ""
     val arrNum = textArr.split(" ")
     for (i in 0 .. arrNum.size-1 step 2){
-            if (arrNum[i].equals("0")){
-                for (x in 1..arrNum[i+1].length) text+=1
-            }
-            else if (arrNum[i].equals("00")){
-                    for (x in 1..arrNum[i+1].length) text+=0
-            }
+        if (arrNum[i].equals("0")){
+            for (x in 1..arrNum[i+1].length) text+=1
+        }
+        else if (arrNum[i].equals("00")){
+            for (x in 1..arrNum[i+1].length) text+=0
+        }
     }
+    val arrText = arrayListOf<Int>()
+    for (i in 1..text.length/7){
+        if (i == 1){
+                arrText.add(text.substring(startIndex = 0, endIndex = 7*i).toInt(2))
+        }
+        else arrText.add(text.substring(startIndex = 7*(i-1), endIndex = 7*i).toInt(2))
+    }
+    text =  ""
+    for (j in arrText){
+        text += j.toChar()
+    }
+
     return text
 }
 fun main() {
@@ -55,5 +68,4 @@ fun main() {
     println("The result:")
     print(decoder(text))
     //print(encoder(textArr))
-
 }
