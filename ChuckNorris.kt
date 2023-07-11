@@ -2,7 +2,14 @@ package chucknorris
 
 import kotlin.text.StringBuilder
 
-fun encoder(textArr: ArrayList<String>) {
+fun encoder() {
+    println("Input string:")
+    val inputText = readln()
+    val textArr = arrayListOf<String>()
+    var text = ""
+    for (i in inputText){
+        textArr.add(i.toString())
+    }
     var hexText = ""
     for (i in textArr) {
         var hexChar = StringBuilder().append(Integer.toBinaryString(i.single().code))
@@ -14,27 +21,32 @@ fun encoder(textArr: ArrayList<String>) {
         }
         hexText += hexString
     }
+
     var tempHexNum = "2"
     for (i in hexText) {
         if (tempHexNum.equals("2")) {
-            if (i.toString().equals("1")) print("0 0")
-            else if (i.toString().equals("0")) print("00 0")
+            if (i.toString().equals("1")) text += "0 0"
+            else if (i.toString().equals("0")) text += "00 0"
             tempHexNum = i.toString()
         } else {
             if (tempHexNum.equals(i.toString())) {
-                print("0")
+                text += "0"
             } else {
-                if (i.toString().equals("0")) print(" 00 0")
-                else if (i.toString().equals("1")) print(" 0 0")
+                if (i.toString().equals("0")) text += " 00 0"
+                else if (i.toString().equals("1")) text += " 0 0"
             }
             tempHexNum = i.toString()
-
         }
     }
+    println("Encoded string:")
+    println(text)
+    main()
 }
-fun decoder(textArr: String):String {
+fun decoder(){
+    println("Input encoded string:")
+    val inputText = readln()
     var text = ""
-    val arrNum = textArr.split(" ")
+    val arrNum = inputText.split(" ")
     for (i in 0 .. arrNum.size-1 step 2){
         if (arrNum[i].equals("0")){
             for (x in 1..arrNum[i+1].length) text+=1
@@ -55,17 +67,19 @@ fun decoder(textArr: String):String {
         text += j.toChar()
     }
 
-    return text
+    println("Decoded string:")
+    println(text)
+    main()
 }
 fun main() {
-    println("Input string:")
-    val text = readln()
-    val textArr = arrayListOf<String>()
-
-    for (i in text){
-        textArr.add(i.toString())
+    println("Please input operation (encode/decode/exit):")
+    val operation = readln()
+    when (operation) {
+        "encode" -> encoder()
+        "decode" -> decoder()
+        "exit" -> {
+            println("Bye!")
+            System.exit(0)
+        }
     }
-    println("The result:")
-    print(decoder(text))
-    //print(encoder(textArr))
 }
